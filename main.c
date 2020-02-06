@@ -95,7 +95,7 @@ halInit();
   // start kernel, after this main() will behave like a thread with priority osPriorityNormal
   osKernelStart();
 
-  while (true) { 
+  while (true)   { 
     osDelay(100);
   }
 }
