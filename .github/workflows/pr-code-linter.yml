@@ -1,11 +1,16 @@
-name: Code linter
+name: test-clang-format
+
 on: [pull_request]
 
 jobs:
-  lintcode:
-
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: clang-tidy check
-      uses: muxee/clang-tidy-action@0.0.1-rc1
+    - uses: actions/checkout@v1
+    - uses: DoozyX/clang-format-lint-action@v0.5
+      with:
+        source: '.'
+        exclude: './third_party'
+        extensions: 'h,cpp'
+        clangFormatVersion: 9
