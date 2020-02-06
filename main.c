@@ -42,7 +42,7 @@ int main(void) {
 
   // HAL initialization, this also initializes the configured device drivers
   // and performs the board-specific initializations.
-  halInit();
+halInit();
 
   // init SWO as soon as possible to make it available to output ASAP
   #if (SWO_OUTPUT == TRUE)
