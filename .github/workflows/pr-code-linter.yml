@@ -2,12 +2,10 @@ name: Code linter
 on: [pull_request]
 
 jobs:
-  label:
+  label: Lint code
 
     runs-on: ubuntu-latest
 
     steps:
     - name: clang-tidy check
       uses: muxee/clang-tidy-action@0.0.1-rc1
-      with:
-        args: --config= --format-style=file
