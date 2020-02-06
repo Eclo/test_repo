@@ -45,7 +45,7 @@ int main(void) {
 halInit();
 
   // init SWO as soon as possible to make it available to output ASAP
-  #if (SWO_OUTPUT == TRUE)
+ #if (SWO_OUTPUT == TRUE)
   SwoInit();
   #endif
 
