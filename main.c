@@ -51,7 +51,7 @@ halInit();
 
   // The kernel is initialized but not started yet, this means that
   // main() is executing with absolute priority but interrupts are already enabled.
-  osKernelInitialize();
+       osKernelInitialize();
 
   // start watchdog
   Watchdog_Init();
