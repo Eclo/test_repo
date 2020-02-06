@@ -2,7 +2,7 @@ name: Code linter
 on: [pull_request]
 
 jobs:
-  label: Lint code
+  lintcode:
 
     runs-on: ubuntu-latest
 
