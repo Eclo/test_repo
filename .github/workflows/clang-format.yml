@@ -19,11 +19,11 @@ jobs:
       with:
         fetch-depth: 2
         ref: ${{ github.event.pull_request.head.sha }}
-    
-    - uses: jwalton/gh-find-current-pr@v1
-      id: findPr
+
+    - uses: 8BitJonny/gh-get-current-pr@v1
+      id: GetPR
       with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: "Install clang-format-10"
       run: |
@@ -31,7 +31,17 @@ jobs:
         sudo apt-get install clang-format-10
 
     - name: "Format Codes"
-      run: SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD ${{ github.event.pull_request.head.sha }}) | grep -E "\.\(c\|h\|hpp\|cpp\)\$")
+      run: |
+        SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD ${{ steps.GetPR.outputs.pr.base.ref }}) | grep -E "\.\(c\|h\|hpp\|cpp\)\$")
+
+        echo "source files to check format:"
+        echo "$SRC"
+
+        if [-z "$SRC" ]
+        then
+          echo "running clang-format..."
+          clang-format-10 -style=file -i $SRC
+        fi
 
     - name: Check diff
       id: HasDiff
@@ -53,4 +63,4 @@ jobs:
       if: success()
       run: |
         echo "Pull Request Number - ${{ env.PULL_REQUEST_NUMBER }}"
-        echo "Submitted PR with code style fixes - ${{ steps.cpr.outputs.pull-request-number }}"
+        echo "Submitted PR with code style fixes - ${{ steps.GetPR.outputs.number }}"
