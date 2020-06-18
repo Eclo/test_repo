@@ -20,7 +20,7 @@ jobs:
         fetch-depth: 2
         ref: ${{ github.event.pull_request.head.sha }}
 
-    - uses: 8BitJonny/gh-get-current-pr@v1
+    - uses: 8BitJonny/gh-get-current-pr@1.0.0
       id: GetPR
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
