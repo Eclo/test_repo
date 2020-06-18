@@ -33,7 +33,7 @@ jobs:
     - name: "Check source code style"
       run: |
         
-        SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD ${{ github.event.pull_request.base.ref }}) | | grep -E ".c$|.h$|.cpp$")
+        SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD ${{ github.event.pull_request.base.ref }}) | grep -E ".c$|.h$|.cpp$")
 
         for changed_file in $SRC; do
           clang-format-10 -style=file -i ${changed_file}
