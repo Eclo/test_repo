@@ -48,6 +48,11 @@ jobs:
     
     - name: Commit changes
       run: |
+        git config --global gc.auto 0
+        git config --global user.name nfbot
+        git config --global user.email nanoframework@outlook.com
+        git config --global core.autocrlf true
+        
         git add -A
         git commit -m "Automated code style fixes."
 
