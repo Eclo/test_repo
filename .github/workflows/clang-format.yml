@@ -36,12 +36,8 @@ jobs:
         echo "source files to check format:"
         echo "$SRC"
 
-        if [-z "$SRC" ]
-        then
-          echo "running clang-format..."
+        if [[-n "$SRC" ]]; then
           clang-format-10 -style=file -i $SRC
-        else
-          echo "no source files to check"
         fi
     
     - name: Check diff
