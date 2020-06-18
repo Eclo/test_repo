@@ -32,10 +32,8 @@ jobs:
     
     - id: files
       uses: jitterbit/get-changed-files@v1
-      with:
-        format: 'csv'
     
-    - name: "Chec source code style"
+    - name: "Check source code style"
       if: success() && steps.files.outputs.added_modified
       run: |
         for changed_file in $(${{ steps.files.outputs.added_modified }} | grep -E "\.\(c\|h\|hpp\|cpp\)\$"); do
@@ -45,7 +43,7 @@ jobs:
     - name: Check diff
       id: HasDiff
       if: success()
-      run: ::set-output name=diff::$(git diff --exit-code HEAD)
+      run: echo "::set-output name=diff::$(git diff --exit-code HEAD)"
     
     - name: Create Pull Request
       if: success() && steps.HasDiff.outputs.diff
