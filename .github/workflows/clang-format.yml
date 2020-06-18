@@ -45,12 +45,13 @@ jobs:
     
     - name: Create Pull Request
       if: success() && steps.HasDiff.outputs.diff
-      uses: peter-evans/create-pull-request@v2
+      uses: repo-sync/pull-request@v2
       with:
-        commit-message: "Automated fix of code style using project clang-format rules."
-        title: "Fix code style for ${{ github.repository }}/${{ steps.GetPR.outputs.number }}"
-        assignees: "${{ github.actor }}"
-        branch: "auto-pr/clang-format/${{ steps.GetPR.outputs.number }}"
+        pr_body: "Automated fix of code style using project clang-format rules."
+        pr_title: "Fix code style for ${{ github.repository }}/${{ steps.GetPR.outputs.number }}"
+        pr_assignee: "${{ github.actor }}"
+        destination_branch: "auto-pr/clang-format/${{ steps.GetPR.outputs.number }}"
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Check outputs
       if: success()
