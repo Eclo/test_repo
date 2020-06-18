@@ -1,22 +1,28 @@
-name: "Auto Clang Format"
+#
+# Copyright (c) 2020 The nanoFramework project contributors
+# See LICENSE file in the project root for full license information.
+#
 
-on:
-  push:
-    paths-ignore:
-      - '*.md'
-      - '*/*.md'
-      - '*/*/*.md'
+name: "Check clang-format"
+
+on: [pull_request]
 
 jobs:
   format:
-    name: "Auto Clang Format"
+    name: "Check clang-format"
 
     runs-on: ubuntu-latest
 
     steps:
+
     - uses: actions/checkout@v2
       with:
         fetch-depth: 2
+    
+    - uses: jwalton/gh-find-current-pr@v1
+      id: findPr
+      with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: "Install clang-format-10"
       run: |
@@ -24,15 +30,38 @@ jobs:
         sudo apt-get install clang-format-10
 
     - name: "Format Codes"
-      run: clang-format-10 -i *.cpp */*.cpp *.hpp */*.hpp *.c */*.c *.h */*.h
-
-    - name: Commit files
       run: |
-        git config --local user.email "jose.simoes@eclo.solutions"
-        git config --local user.name "josesimoes"
-        git diff --exit-code HEAD || git commit -a --amend --no-edit
+        SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD ${{ github.sha }}) | grep -E "\.\(c\|h\|hpp\|cpp\)\$")
 
-    - name: Push changes
+        echo "source files to check format:"
+        echo "$SRC"
+
+        if [-z "$SRC" ]
+        then
+          echo "running clang-format..."
+          clang-format-10 -style=file -i $SRC
+        else
+          echo "no source files to check"
+        fi
+    
+    - name: Check diff
+      id: HasDiff
+      if: success()
+      run: ::set-output name=diff::$(git diff --exit-code HEAD)
+    
+    - name: Create Pull Request
+      if: success() && steps.HasDiff.outputs.diff
+      uses: peter-evans/create-pull-request@v2
+      with:
+        commit-message: "Automated fix of code style using project clang-format rules."
+        title: "Fix code style for ${{ github.repository }}/${PR}"
+        assignees: "${{ github.actor }}"
+        branch: "auto-pr/clang-format/${PR}"
+      env:
+        PR: ${{ steps.findPr.outputs.pr }}
+
+    - name: Check outputs
+      if: success()
       run: |
-        git remote add token https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git
-        git push token HEAD:${GITHUB_REF} --force-with-lease=${GITHUB_REF}:${GITHUB_SHA}
+        echo "Pull Request Number - ${{ env.PULL_REQUEST_NUMBER }}"
+        echo "Submitted PR with code style fixes - ${{ steps.cpr.outputs.pull-request-number }}"
