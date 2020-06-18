@@ -20,7 +20,7 @@ jobs:
         fetch-depth: 2
         ref: ${{ github.event.pull_request.head.sha }}
 
-    - uses: juliangruber/find-pull-request-action@v1
+    - uses: 8BitJonny/gh-get-current-pr@1.0.0
       id: GetPR
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -31,7 +31,10 @@ jobs:
         sudo apt-get install clang-format-10
 
     - name: "Format Codes"
+      if: success() && steps.GetPR.outputs.pr
       run: |
+        echo "base branch is ${{ steps.GetPR.outputs.pr }}"
+        
         SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD ${{ steps.GetPR.outputs.pr.base.ref }}) | grep -E "\.\(c\|h\|hpp\|cpp\)\$")
 
         echo "source files to check format:"
@@ -53,9 +56,9 @@ jobs:
       uses: peter-evans/create-pull-request@v2
       with:
         commit-message: "Automated fix of code style using project clang-format rules."
-        title: "Fix code style for ${{ github.repository }}/${{ steps.findPr.outputs.number }}"
+        title: "Fix code style for ${{ github.repository }}/${{ steps.GetPR.outputs.number }}"
         assignees: "${{ github.actor }}"
-        branch: "auto-pr/clang-format/${{ steps.findPr.outputs.number }}"
+        branch: "auto-pr/clang-format/${{ steps.GetPR.outputs.number }}"
 
     - name: Check outputs
       if: success()
