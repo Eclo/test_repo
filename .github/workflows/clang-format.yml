@@ -20,7 +20,7 @@ jobs:
         fetch-depth: 2
         ref: ${{ github.event.pull_request.head.sha }}
 
-    - uses: 8BitJonny/gh-get-current-pr@1.0.0
+    - uses: juliangruber/find-pull-request-action@v1
       id: GetPR
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -29,22 +29,18 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install clang-format-10
-
-    - name: "Format Codes"
-      if: success() && steps.GetPR.outputs.pr
+    
+    - id: files
+      uses: jitterbit/get-changed-files@v1
+      with:
+        format: 'csv'
+    
+    - name: "Chec source code style"
+      if: success() && steps.files.outputs.added_modified
       run: |
-        echo "base branch is ${{ steps.GetPR.outputs.pr }}"
-        
-        SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD ${{ steps.GetPR.outputs.pr.base.ref }}) | grep -E "\.\(c\|h\|hpp\|cpp\)\$")
-
-        echo "source files to check format:"
-        echo "$SRC"
-
-        if [-z "$SRC" ]
-        then
-          echo "running clang-format..."
-          clang-format-10 -style=file -i $SRC
-        fi
+        for changed_file in $(${{ steps.files.outputs.added_modified }} | grep -E "\.\(c\|h\|hpp\|cpp\)\$"); do
+          clang-format-10 -style=file -i ${changed_file}
+        done
 
     - name: Check diff
       id: HasDiff
