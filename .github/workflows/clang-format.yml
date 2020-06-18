@@ -64,6 +64,7 @@ jobs:
         PULL_REQUEST_TITLE: "Fix code style for ${{ github.repository }}/${{ steps.GetPR.outputs.number }}"
         PULL_REQUEST_ASSIGNEES: "${{ github.actor }}"
         PULL_REQUEST_BRANCH: "nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
+        PULL_REQUEST_FROM_BRANCH: "nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Check outputs
