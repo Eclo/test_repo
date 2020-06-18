@@ -1,4 +1,4 @@
-name: "Auto Clang Format"
+name: "clang format"
 
 on:
   push:
@@ -24,7 +24,9 @@ jobs:
         sudo apt-get install clang-format-10
 
     - name: "Format Codes"
-      run: clang-format-10 -i *.cpp */*.cpp *.hpp */*.hpp *.c */*.c *.h */*.h
+      run: |
+        SRC=$(git ls-tree --full-tree -r HEAD | grep -e "\.\(c\|h\|hpp\|cpp\)\$" | cut -f 2)
+        clang-format-10 -i $SRC
 
     - name: Commit files
       run: |
