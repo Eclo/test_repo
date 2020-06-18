@@ -19,7 +19,8 @@ jobs:
       with:
         fetch-depth: 0
     
-    - run: git checkout "nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
+    - name: "Checkout fixes branch"
+      run: git checkout -b "nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
 
     - uses: juliangruber/find-pull-request-action@v1
       id: GetPR
