@@ -46,14 +46,14 @@ jobs:
     - name: Create Pull Request
       if: success() && steps.HasDiff.outputs.diff
       uses: repo-sync/pull-request@v2
-      with:
-        pr_body: "Automated fix of code style using project clang-format rules."
-        pr_title: "Fix code style for ${{ github.repository }}/${{ steps.GetPR.outputs.number }}"
-        pr_assignee: "${{ github.actor }}"
-        destination_branch: "auto-pr/clang-format/${{ steps.GetPR.outputs.number }}"
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      env:
+        PULL_REQUEST_BODY: "Automated fix of code style using project clang-format rules."
+        PULL_REQUEST_TITLE: "Fix code style for ${{ github.repository }}/${{ steps.GetPR.outputs.number }}"
+        PULL_REQUEST_ASSIGNEES: "${{ github.actor }}"
+        PULL_REQUEST_BRANCH: "auto-pr/clang-format/${{ steps.GetPR.outputs.number }}"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Check outputs
       if: success()
       run: |
-        echo "Submitted PR with code style fixes - ${{ steps.GetPR.outputs.number }}"
+        echo "Submitted PR with code style fixes - ${PULL_REQUEST_URL}"
