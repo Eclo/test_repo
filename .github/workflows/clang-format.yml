@@ -17,7 +17,7 @@ jobs:
 
     - uses: actions/checkout@v2
       with:
-        fetch-depth: 0
+        fetch-depth: 2
 
     - uses: juliangruber/find-pull-request-action@v1
       id: GetPR
@@ -50,6 +50,7 @@ jobs:
         PULL_REQUEST_BODY: "Automated fix of code style using project clang-format rules."
         PULL_REQUEST_TITLE: "Fix code style for ${{ github.repository }}/${{ steps.GetPR.outputs.number }}"
         PULL_REQUEST_ASSIGNEES: "${{ github.actor }}"
+        PULL_REQUEST_FROM_BRANCH: "${{ github.event.pull_request.head.ref }}"
         PULL_REQUEST_BRANCH: "auto-pr/clang-format/${{ steps.GetPR.outputs.number }}"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
