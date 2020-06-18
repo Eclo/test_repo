@@ -30,16 +30,8 @@ jobs:
         sudo apt-get install clang-format-10
 
     - name: "Format Codes"
-      run: |
-        SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD ${{ github.sha }}) | grep -E "\.\(c\|h\|hpp\|cpp\)\$")
+      run: SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD ${{ github.sha }}) | grep -E "\.\(c\|h\|hpp\|cpp\)\$")
 
-        echo "source files to check format:"
-        echo "$SRC"
-
-        if [[-n "$SRC" ]]; then
-          clang-format-10 -style=file -i $SRC
-        fi
-    
     - name: Check diff
       id: HasDiff
       if: success()
