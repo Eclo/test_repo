@@ -30,13 +30,12 @@ jobs:
         sudo apt-get update
         sudo apt-get install clang-format-10
     
-    - id: files
-      uses: jitterbit/get-changed-files@v1
-    
     - name: "Check source code style"
-      if: success() && steps.files.outputs.added_modified
       run: |
-        for changed_file in $(${{ steps.files.outputs.added_modified }} | grep -E "\.\(c\|h\|hpp\|cpp\)\$"); do
+        
+        SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD ${{ github.event.pull_request.base.ref }}) | grep -E "\.\(c\|h\|hpp\|cpp\)\$")
+
+        for changed_file in $SRC; do
           clang-format-10 -style=file -i ${changed_file}
         done
 
