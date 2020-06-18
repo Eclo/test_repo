@@ -53,14 +53,11 @@ jobs:
       uses: peter-evans/create-pull-request@v2
       with:
         commit-message: "Automated fix of code style using project clang-format rules."
-        title: "Fix code style for ${{ github.repository }}/${PR}"
+        title: "Fix code style for ${{ github.repository }}/${{ steps.findPr.outputs.number }}"
         assignees: "${{ github.actor }}"
-        branch: "auto-pr/clang-format/${PR}"
-      env:
-        PR: ${{ steps.findPr.outputs.pr }}
+        branch: "auto-pr/clang-format/${{ steps.findPr.outputs.number }}"
 
     - name: Check outputs
       if: success()
       run: |
-        echo "Pull Request Number - ${{ env.PULL_REQUEST_NUMBER }}"
         echo "Submitted PR with code style fixes - ${{ steps.GetPR.outputs.number }}"
