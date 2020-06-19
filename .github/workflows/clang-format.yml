@@ -75,17 +75,25 @@ jobs:
         git push --set-upstream origin ${{ steps.WorkBranch.outputs.name }}
 
     - name: 'Create Pull Request'
+      id: CreatePR
       if: success() && steps.HasDiff.outputs.diff
       uses: repo-sync/pull-request@v2
-      env:
-        PULL_REQUEST_BODY: "Automated fix of code style using project clang-format rules."
-        PULL_REQUEST_TITLE: "Fix code style for ${{ github.repository }}/${{ steps.GetPR.outputs.number }}"
-        PULL_REQUEST_ASSIGNEES: "${{ github.actor }}"
-        PULL_REQUEST_BRANCH: "nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
-        PULL_REQUEST_FROM_BRANCH: "nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
-        BRANCH_PREFIX: "nfbot/"
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        source_branch: "nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
+        destination_branch: "nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
+        pr_body: "Automated fix of code style using project clang-format rules."
+        pr_title: "Fix code style for ${{ github.repository }}/${{ steps.GetPR.outputs.number }}"
+        pr_assignee: ${{ github.actor }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: 'Output PR details'
-      if: success()
-      run: echo "Submitted PR with code style fixes - ${PULL_REQUEST_URL}"
+      uses: github-actions-up-and-running/pr-comment@v1.0.0
+      if: success() && steps.HasDiff.outputs.diff
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        message: "There where issues with the code style on the source files.\r\nA PR was submitted with the code style fixes.\r\nSee ${{ steps.CreatePR.outputs.pr_url }}/"
+
+    # exit with error to force the check to fail
+    - name: 'Report failure'
+      if: success() && steps.HasDiff.outputs.diff
+      run: exit 1
