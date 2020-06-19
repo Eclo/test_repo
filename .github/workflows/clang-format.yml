@@ -3,61 +3,77 @@
 # See LICENSE file in the project root for full license information.
 #
 
-name: "Check clang-format"
+name: "Check code style"
 
-on: [pull_request]
+on:
+  pull_request:
+    branches: 
+      - "master"
+      - "develop"
+      - develop/*"
+      - release/*"
 
 jobs:
   format:
-    name: "Check clang-format"
-
     runs-on: ubuntu-latest
 
     steps:
 
+    # need to check all repo to make sure all branches are there
+    # setting ref to PR SHA to checkout pull request HEAD commit instead of merge commit
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    
-    - name: "Checkout fixes branch"
-      run: git checkout -b "nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
+        ref: ${{ github.event.pull_request.head.sha }}
 
     - uses: juliangruber/find-pull-request-action@v1
       id: GetPR
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: "Install clang-format-10"
+    
+    # Checkout branch for code style fixes
+    # new branch from PR originating branch 
+    - id: WorkBranch
       run: |
+        name="nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
+        echo "::set-output name=name::$name"
+        git checkout -b $name ${{ github.event.pull_request.head.ref }}
+
+    # Install clang-format-10
+    - run: |
         sudo apt-get update
         sudo apt-get install clang-format-10
     
-    - name: "Check source code style"
-      run: |
-        
+    # Check source code style
+    - run: |
         SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD origin/${{ github.event.pull_request.base.ref }}) | grep -E ".c$|.h$|.cpp$")
 
         for changed_file in $SRC; do
           clang-format-10 -style=file -i ${changed_file}
         done
 
-    - name: Check diff
-      id: HasDiff
+    # Check diff
+    - id: HasDiff
       if: success()
       run: echo "::set-output name=diff::$(git diff --exit-code HEAD)"
     
-    - name: Commit changes
-      run: |
+    # Commit changes
+    - run: |
+        # configure git and setup identity
         git config --global gc.auto 0
+        git config --global core.autocrlf true
         git config --global user.name nfbot
         git config --global user.email nanoframework@outlook.com
-        git config --global core.autocrlf true
         
+        # commit changed files
         git add -A
         git commit -m "Automated code style fixes."
+        
+        # push to new branch
+        git push --set-upstream origin ${{ steps.WorkBranch.outputs.name }}
 
-    - name: Create Pull Request
-      if: success() && steps.HasDiff.outputs.diff
+    # Create Pull Request
+    - if: success() && steps.HasDiff.outputs.diff
       uses: repo-sync/pull-request@v2
       env:
         PULL_REQUEST_BODY: "Automated fix of code style using project clang-format rules."
@@ -68,7 +84,6 @@ jobs:
         BRANCH_PREFIX: "nfbot/"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Check outputs
-      if: success()
-      run: |
-        echo "Submitted PR with code style fixes - ${PULL_REQUEST_URL}"
+    # Check outputs
+    - if: success()
+      run: echo "Submitted PR with code style fixes - ${PULL_REQUEST_URL}"
