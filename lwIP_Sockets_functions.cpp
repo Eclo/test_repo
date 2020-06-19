@@ -7,6 +7,7 @@
 #include "LWIP_Sockets.h"
 
 
+
 bool HAL_SOCK_Initialize()
 {
     NATIVE_PROFILE_PAL_NETWORK();
