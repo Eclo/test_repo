@@ -49,7 +49,7 @@ jobs:
 
     - name: Changed Files Exporter
       id: PrFiles
-      uses: futuratrepadeira/changed-files@v3.1.0
+      uses: futuratrepadeira/changed-files@v3.2.1
       with:
           repo-token: ${{ github.token }}
           pattern: '^.*\.(c|cpp|h)$'
