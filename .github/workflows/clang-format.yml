@@ -46,18 +46,26 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install clang-format-10
-    
+
+    - name: Changed Files Exporter
+      id: PrFiles
+      uses: futuratrepadeira/changed-files@v3.1.0
+      with:
+          repo-token: ${{ github.token }}
+          pattern: '^.*\.(c|cpp|h)$'
+
     - name: 'Run clang-format'
       run: |
-        SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD origin/${{ github.event.pull_request.base.ref }}) | grep -E ".c$|.h$|.cpp$")
-
-        if [ -z "${SRC}" ]; then
-          echo "no files to check"
-        else
-          for changed_file in $SRC; do
-            clang-format-10 -style=file -i ${changed_file}
-          done
-        fi
+       
+        mapfile -d ',' -t added_files < <(printf '%s,' '${{ steps.PrFiles.outputs.files_created }}')
+        for added_file in "${added_files[@]}"; do
+          clang-format-10 -style=file -i ${added_file}
+        done
+        
+        mapfile -d ',' -t updated_files < <(printf '%s,' '${{ steps.PrFiles.outputs.files_updated }}')
+        for updated_file in "${updated_files[@]}"; do
+          clang-format-10 -style=file -i ${updated_fil}
+        done
 
     - name: 'Check diff'
       id: HasDiff
