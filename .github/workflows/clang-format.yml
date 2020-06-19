@@ -83,7 +83,7 @@ jobs:
         source_branch: "nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
         destination_branch: "${{ github.event.pull_request.head.ref }}"
         pr_body: "Automated fix of code style using project clang-format rules.\r\nYou can review and make changes or simply merge this PR to apply the fixes."
-        pr_title: "Fix code style for ${{ github.repository }}/${{ steps.GetPR.outputs.number }}"
+        pr_title: "Code style fixes for ${{ github.repository }} PR#${{ steps.GetPR.outputs.number }}"
         pr_assignee: ${{ github.actor }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -92,7 +92,7 @@ jobs:
       if: success() && steps.HasDiff.outputs.diff
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        message: "There where issues with the code style on the source files.\r\nA PR was submitted with the code style fixes.\r\nSee ${{ steps.CreatePR.outputs.pr_url }}."
+        message: "There where issues with the code style on the source files.\r\nA PR was submitted with the code style fixes. See ${{ steps.CreatePR.outputs.pr_url }}."
 
     # if there are fixes to be made, exit with error to force the check to fail
     - name: 'Report failure'
