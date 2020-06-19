@@ -58,15 +58,19 @@ jobs:
       run: |
        
         mapfile -d ',' -t added_files < <(printf '%s,' '${{ steps.PrFiles.outputs.files_created }}')
-        for added_file in "${added_files[@]}"; do
-          echo ">> ${added_file}"
-          clang-format-10 -style=file -i ${added_file}
+        for addedFile in "${added_files[@]}"; do
+          if [ -n "$addedFile" ]; then
+            echo ">> ${addedFile}"
+            clang-format-10 -style=file -i ${addedFile}
+          fi
         done
         
         mapfile -d ',' -t updated_files < <(printf '%s,' '${{ steps.PrFiles.outputs.files_updated }}')
-        for updated_file in "${updated_files[@]}"; do
-          echo ">> ${updated_file}"
-          clang-format-10 -style=file -i ${updated_file}
+        for updatedFile in "${updated_files[@]}"; do
+          if [ -n "$updatedFile" ]; then
+            echo ">> ${updatedFile}"
+            clang-format-10 -style=file -i ${updatedFile}
+          fi
         done
 
     - name: 'Check diff'
