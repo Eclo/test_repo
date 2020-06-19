@@ -61,6 +61,7 @@ jobs:
       run: echo "::set-output name=diff::$(git diff --exit-code HEAD)"
     
     - name: 'Commit changes'
+      if: success() && steps.HasDiff.outputs.diff
       run: |
         # configure git and setup identity
         git config --global gc.auto 0
