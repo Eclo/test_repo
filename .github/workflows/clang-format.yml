@@ -21,7 +21,8 @@ jobs:
 
     # need to check all repo to make sure all branches are there
     # setting ref to PR SHA to checkout pull request HEAD commit instead of merge commit
-    - uses: actions/checkout@v2
+    - name: 'Checkout PR'
+      uses: actions/checkout@v2
       with:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
@@ -33,32 +34,33 @@ jobs:
     
     # Checkout branch for code style fixes
     # new branch from PR originating branch 
-    - id: WorkBranch
+    - name: 'Create work branch'
+      id: WorkBranch
       run: |
         name="nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
         echo "::set-output name=name::$name"
-        git checkout -b $name ${{ github.event.pull_request.head.ref }}
+        git checkout -b $name origin/${{ github.event.pull_request.head.ref }}
 
-    # Install clang-format-10
-    - run: |
+    - name: 'Install clang-format-10'
+      run: |
         sudo apt-get update
         sudo apt-get install clang-format-10
     
-    # Check source code style
-    - run: |
+    - name: 'Run clang-format'
+      run: |
         SRC=$(git diff --name-only --diff-filter=d $(git merge-base HEAD origin/${{ github.event.pull_request.base.ref }}) | grep -E ".c$|.h$|.cpp$")
 
         for changed_file in $SRC; do
           clang-format-10 -style=file -i ${changed_file}
         done
 
-    # Check diff
-    - id: HasDiff
+    - name: 'Check diff'
+      id: HasDiff
       if: success()
       run: echo "::set-output name=diff::$(git diff --exit-code HEAD)"
     
-    # Commit changes
-    - run: |
+    - name: 'Commit changes'
+      run: |
         # configure git and setup identity
         git config --global gc.auto 0
         git config --global core.autocrlf true
@@ -72,8 +74,8 @@ jobs:
         # push to new branch
         git push --set-upstream origin ${{ steps.WorkBranch.outputs.name }}
 
-    # Create Pull Request
-    - if: success() && steps.HasDiff.outputs.diff
+    - name: 'Create Pull Request'
+      if: success() && steps.HasDiff.outputs.diff
       uses: repo-sync/pull-request@v2
       env:
         PULL_REQUEST_BODY: "Automated fix of code style using project clang-format rules."
@@ -84,6 +86,6 @@ jobs:
         BRANCH_PREFIX: "nfbot/"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # Check outputs
-    - if: success()
+    - name: 'Output PR details'
+      if: success()
       run: echo "Submitted PR with code style fixes - ${PULL_REQUEST_URL}"
