@@ -84,8 +84,6 @@ jobs:
         git config --global gc.auto 0
         git config --global core.autocrlf true
         
-        git remote add origin ${{ github.event.pull_request.base.repo.html_url }}
-        
         git config --global user.name nfbot
         git config --global user.email nanoframework@outlook.com
         
@@ -94,7 +92,7 @@ jobs:
         git commit -m "Automated code style fixes."
         
         # push to new branch
-        git push --set-upstream origin ${{ steps.WorkBranch.outputs.name }}
+        git push --repository=${{ github.event.pull_request.base.repo.html_url }} ${{ steps.WorkBranch.outputs.name }}
 
     - name: 'Create Pull Request'
       id: CreatePR
