@@ -27,7 +27,7 @@ jobs:
       with:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
-        repository:  ${{ github.event.pull_request.head.repo.full_name }}
+        repository: ${{ github.event.pull_request.head.repo.full_name }}
 
     - uses: juliangruber/find-pull-request-action@v1
       id: GetPR
@@ -83,6 +83,9 @@ jobs:
         # configure git and setup identity
         git config --global gc.auto 0
         git config --global core.autocrlf true
+        
+        git remote add origin ${{ github.event.pull_request.base.repo.html_url }}
+        
         git config --global user.name nfbot
         git config --global user.email nanoframework@outlook.com
         
@@ -98,7 +101,7 @@ jobs:
       if: success() && steps.HasDiff.outputs.diff
       uses: repo-sync/pull-request@v2
       with:
-        source_branch: ${{ steps.WorkBranch.outputs.name }}
+        source_branch: origin/${{ steps.WorkBranch.outputs.name }}
         destination_branch: "${{ github.event.pull_request.head.ref }}"
         pr_body: "Automated fix of code style using project clang-format rules.\r\nYou can review and make changes or simply merge this PR to apply the fixes.\r\n:warning: Make sure you delete this branch after merging it!:warning:"
         pr_title: "Code style fixes for ${{ github.repository }} PR#${{ steps.GetPR.outputs.number }}"
