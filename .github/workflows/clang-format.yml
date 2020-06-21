@@ -27,6 +27,7 @@ jobs:
       with:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
+        repository:  ${{ github.event.pull_request.head.repo.full_name }}
 
     - uses: juliangruber/find-pull-request-action@v1
       id: GetPR
@@ -90,7 +91,7 @@ jobs:
         git commit -m "Automated code style fixes."
         
         # push to new branch
-        git push ${{ steps.WorkBranch.outputs.name }}
+        git push --set-upstream origin ${{ steps.WorkBranch.outputs.name }}
 
     - name: 'Create Pull Request'
       id: CreatePR
