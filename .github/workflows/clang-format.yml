@@ -40,7 +40,7 @@ jobs:
       run: |
         name="nfbot/clang-format-fix/$(uuidgen)"
         echo "::set-output name=name::$name"
-        git checkout -b $name origin/${{ github.event.pull_request.head.ref }}
+        git checkout -b $name ${{ github.event.pull_request.head.ref }}
 
     - name: 'Install clang-format-10'
       run: |
@@ -60,7 +60,6 @@ jobs:
         mapfile -d ',' -t added_files < <(printf '%s,' '${{ steps.PrFiles.outputs.files_created }}')
         for addedFile in "${added_files[@]}"; do
           if [ -n "$addedFile" ]; then
-            echo ">> ${addedFile}"
             clang-format-10 -style=file -i ${addedFile}
           fi
         done
@@ -68,7 +67,6 @@ jobs:
         mapfile -d ',' -t updated_files < <(printf '%s,' '${{ steps.PrFiles.outputs.files_updated }}')
         for updatedFile in "${updated_files[@]}"; do
           if [ -n "$updatedFile" ]; then
-            echo ">> ${updatedFile}"
             clang-format-10 -style=file -i ${updatedFile}
           fi
         done
@@ -92,14 +90,14 @@ jobs:
         git commit -m "Automated code style fixes."
         
         # push to new branch
-        git push --set-upstream origin ${{ steps.WorkBranch.outputs.name }}
+        git push ${{ steps.WorkBranch.outputs.name }}
 
     - name: 'Create Pull Request'
       id: CreatePR
       if: success() && steps.HasDiff.outputs.diff
       uses: repo-sync/pull-request@v2
       with:
-        source_branch: "nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
+        source_branch: ${{ steps.WorkBranch.outputs.name }}
         destination_branch: "${{ github.event.pull_request.head.ref }}"
         pr_body: "Automated fix of code style using project clang-format rules.\r\nYou can review and make changes or simply merge this PR to apply the fixes.\r\n:warning: Make sure you delete this branch after merging it!:warning:"
         pr_title: "Code style fixes for ${{ github.repository }} PR#${{ steps.GetPR.outputs.number }}"
