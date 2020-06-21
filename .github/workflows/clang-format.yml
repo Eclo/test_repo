@@ -90,7 +90,7 @@ jobs:
         git commit -m "Automated code style fixes."
         
         # push to new branch
-        git push --set-upstream origin ${{ steps.WorkBranch.outputs.name }}
+        git push ${{ steps.WorkBranch.outputs.name }}
 
     - name: 'Create Pull Request'
       id: CreatePR
