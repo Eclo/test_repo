@@ -84,6 +84,8 @@ jobs:
         git config --global gc.auto 0
         git config --global core.autocrlf true
         
+        git remote add upstream ${{ github.event.pull_request.base.repo.html_url }}
+        
         git config --global user.name nfbot
         git config --global user.email nanoframework@outlook.com
         
@@ -92,7 +94,7 @@ jobs:
         git commit -m "Automated code style fixes."
         
         # push to new branch in HEAD repo
-        git push origin HEAD:refs/heads/${{ steps.WorkBranch.outputs.name }} 
+        git push upstream ${{ steps.WorkBranch.outputs.name }}
 
     - name: 'Create Pull Request'
       id: CreatePR
