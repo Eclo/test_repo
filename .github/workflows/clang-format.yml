@@ -101,7 +101,7 @@ jobs:
       with:
         source_branch: "nfbot/clang-format-fix/${{ github.event.pull_request.head.ref }}"
         destination_branch: "${{ github.event.pull_request.head.ref }}"
-        pr_body: "Automated fix of code style using project clang-format rules.\r\nYou can review and make changes or simply merge this PR to apply the fixes."
+        pr_body: "Automated fix of code style using project clang-format rules.\r\nYou can review and make changes or simply merge this PR to apply the fixes.\r\n:warning: Make sure you delete this branch after merging it!:warning:"
         pr_title: "Code style fixes for ${{ github.repository }} PR#${{ steps.GetPR.outputs.number }}"
         pr_assignee: ${{ github.actor }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
