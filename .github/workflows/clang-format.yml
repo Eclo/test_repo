@@ -92,7 +92,7 @@ jobs:
         git commit -m "Automated code style fixes."
         
         # push to new branch
-        git push --repository=${{ github.event.pull_request.base.repo.html_url }} ${{ steps.WorkBranch.outputs.name }}
+        git push ${{ steps.WorkBranch.outputs.name }} ${{ github.event.pull_request.base.repo.html_url }}
 
     - name: 'Create Pull Request'
       id: CreatePR
