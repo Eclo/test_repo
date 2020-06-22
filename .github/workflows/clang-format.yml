@@ -98,9 +98,10 @@ jobs:
         # repo=$(echo ${{ github.event.pull_request.base.repo.clone_url }} | sed "s:/*$::")
         
         git remote add upstream ${{ github.event.pull_request.base.repo.clone_url }}
+        git pull upstream
         
         # push to new branch in HEAD repo
-        git -c http.extraheader="AUTHORIZATION: $auth" push "${{ steps.WorkBranch.outputs.name }}"
+        git -c http.extraheader="AUTHORIZATION: $auth" push "upstream/${{ steps.WorkBranch.outputs.name }}"
 
     - name: 'Create Pull Request'
       id: CreatePR
