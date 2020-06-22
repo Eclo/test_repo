@@ -26,7 +26,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
-        ref: ${{ github.event.pull_request.head.sha }}
+        ref: ${{ github.head_ref }}
         repository: ${{ github.event.pull_request.head.repo.full_name }}
         persist-credentials: false
 
@@ -95,12 +95,12 @@ jobs:
         # set auth token
         auth="echo -n josesimoes:${{ secrets.NFBOT_GITHUB_ACTIONS }} | base64"
         
-        # repo=$(echo ${{ github.event.pull_request.base.repo.clone_url }} | sed "s:/*$::")
+        #repo=$(echo ${{ github.event.pull_request.base.repo.clone_url }} | sed "s:/*$::")
         
-        # git remote set-url origin "$repo"
+        #git remote add nf-repo $repo
         
         # push to new branch in HEAD repo
-        git -c http.extraheader="AUTHORIZATION: $auth" push --set-upstream origin "HEAD:${{ steps.WorkBranch.outputs.name }}"
+        git -c http.extraheader="AUTHORIZATION: $auth" push --repo="${{ github.event.pull_request.base.repo.clone_url }}" "HEAD:${{ steps.WorkBranch.outputs.name }}"
 
     - name: 'Create Pull Request'
       id: CreatePR
