@@ -100,7 +100,7 @@ jobs:
         #git remote add nf-repo $repo
         
         # push to new branch in HEAD repo
-        git -c http.extraheader="AUTHORIZATION: $auth" push --repo="${{ github.event.pull_request.base.repo.clone_url }}" "HEAD:${{ steps.WorkBranch.outputs.name }}"
+        git -c http.extraheader="AUTHORIZATION: $auth" push --repo=${{ github.event.pull_request.base.repo.html_url }} "HEAD:${{ steps.WorkBranch.outputs.name }}"
 
     - name: 'Create Pull Request'
       id: CreatePR
