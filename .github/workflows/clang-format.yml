@@ -27,6 +27,9 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.base.sha }}
         fetch-depth: 0
+        github-token: ${{ secrets.NFBOT_GITHUB_ACTIONS }}
+      env:
+        NFBOT_GITHUB_ACTIONS: ${{ secrets.NFBOT_GITHUB_ACTIONS }}
 
     - uses: juliangruber/find-pull-request-action@v1.1.0
       id: GetPR
@@ -98,15 +101,12 @@ jobs:
         git commit -m "Automated code style fixes."
 
         # set auth token
-        auth="echo -n josesimoes:$NFBOT_GITHUB_ACTIONS | base64"
+        # auth="echo -n josesimoes:$NFBOT_GITHUB_ACTIONS | base64"
         
         # push to new branch in HEAD repo
         # git -c http.extraheader="AUTHORIZATION: $auth" push -u upstream "${{ steps.WorkBranch.outputs.name }}:${{ steps.WorkBranch.outputs.name }}"
         git -c http.extraheader="AUTHORIZATION: $auth" push origin "${{ steps.WorkBranch.outputs.name }}:${{ steps.WorkBranch.outputs.name }}"
-        #git push origin "${{ steps.WorkBranch.outputs.name }}:${{ steps.WorkBranch.outputs.name }}"
-      env:
-        NFBOT_GITHUB_ACTIONS: ${{ secrets.NFBOT_GITHUB_ACTIONS }}
-
+        git push origin "${{ steps.WorkBranch.outputs.name }}:${{ steps.WorkBranch.outputs.name }}"
 
     - name: 'Create Pull Request'
       id: CreatePR
