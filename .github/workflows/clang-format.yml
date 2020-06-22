@@ -98,7 +98,7 @@ jobs:
         # repo=$(echo ${{ github.event.pull_request.base.repo.clone_url }} | sed "s:/*$::")
         
         git remote add upstream ${{ github.event.pull_request.base.repo.clone_url }}
-        git pull upstream
+        git fetch --all
         
         # push to new branch in HEAD repo
         git -c http.extraheader="AUTHORIZATION: $auth" push "upstream/${{ steps.WorkBranch.outputs.name }}"
