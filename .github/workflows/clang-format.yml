@@ -98,7 +98,7 @@ jobs:
         git remote set-url origin ${{ github.event.pull_request.base.repo.html_url }}.
         
         # push to new branch in HEAD repo
-        git -c http.extraheader="AUTHORIZATION: $auth" push HEAD:${{ steps.WorkBranch.outputs.name }}
+        git -c http.extraheader="AUTHORIZATION: $auth" push -u origin HEAD:${{ steps.WorkBranch.outputs.name }}
 
     - name: 'Create Pull Request'
       id: CreatePR
