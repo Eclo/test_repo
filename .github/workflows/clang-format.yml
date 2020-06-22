@@ -25,6 +25,7 @@ jobs:
     - name: 'Checkout PR'
       uses: actions/checkout@v2.3.1
       with:
+        ref: ${{ github.event.pull_request.head.sha }}
         fetch-depth: 0
 
     - uses: juliangruber/find-pull-request-action@v1
@@ -37,12 +38,10 @@ jobs:
     - name: 'Create work branch'
       id: WorkBranch
       run: |
-        # repo=$(echo ${{ github.event.pull_request.base.repo.clone_url }} | sed "s:/*$::")
-        
-        git remote add pr-branch "${{ github.event.pull_request.base.repo.html_url }}"
+        git remote add pr-branch "${{ github.event.pull_request.head.repo.html_url }}"
         git fetch --all
 
-        git pull pr-branch/${{ github.event.pull_request.head.ref }}
+        git pull pr-branch ${{ github.event.pull_request.head.ref }}
         
         git checkout pr-branch/${{ github.event.pull_request.head.ref }}
 
