@@ -25,11 +25,10 @@ jobs:
     - name: 'Checkout PR'
       uses: actions/checkout@v2.3.1
       with:
-        ref: ${{ github.event.pull_request.head.sha }}
-        token: ${{ secrets.NFBOT_GITHUB_ACTIONS }}
+        ref: ${{ github.event.pull_request.base.sha }}
         fetch-depth: 0
 
-    - uses: juliangruber/find-pull-request-action@v1
+    - uses: juliangruber/find-pull-request-action@v1.1.0
       id: GetPR
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -42,7 +41,7 @@ jobs:
         git remote add pr-branch "${{ github.event.pull_request.head.repo.html_url }}"
         git fetch --all
 
-        git pull pr-branch ${{ github.event.pull_request.head.ref }}
+        # git pull pr-branch ${{ github.event.pull_request.head.ref }}
         
         git checkout pr-branch/${{ github.event.pull_request.head.ref }}
 
