@@ -101,7 +101,7 @@ jobs:
         git fetch --all
         
         # push to new branch in HEAD repo
-        git -c http.extraheader="AUTHORIZATION: $auth" push "${{ steps.WorkBranch.outputs.name }}" upstream
+        git -c http.extraheader="AUTHORIZATION: $auth" push -u origin "${{ steps.WorkBranch.outputs.name }}:${{ steps.WorkBranch.outputs.name }}"
 
     - name: 'Create Pull Request'
       id: CreatePR
