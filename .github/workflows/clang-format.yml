@@ -96,7 +96,7 @@ jobs:
         auth="echo -n josesimoes:${{ secrets.NFBOT_GITHUB_ACTIONS }} | base64"
         
         # push to new branch in HEAD repo
-        remoteRepo="https://github.com/${{ github.event.pull_request.base.repo.full_name }}"
+        remoteRepo="https://github.com/${{ github.event.pull_request.base.repo.full_name }}.git"
         git -c http.extraheader="AUTHORIZATION: $auth" push "$remoteRepo" HEAD:${{ steps.WorkBranch.outputs.name }}
 
     - name: 'Create Pull Request'
