@@ -95,9 +95,9 @@ jobs:
         # set auth token
         auth="echo -n josesimoes:${{ secrets.NFBOT_GITHUB_ACTIONS }} | base64"
         
-        repo=$(echo ${{ github.event.pull_request.base.repo.clone_url }} | sed "s:/*$::")
+        $ repo=$(echo ${{ github.event.pull_request.base.repo.clone_url }} | sed "s:/*$::")
         
-        git remote add upstream $repo
+        git remote add upstream "${{ github.event.pull_request.base.repo.html_url }}"
         git fetch --all
         
         # push to new branch in HEAD repo
