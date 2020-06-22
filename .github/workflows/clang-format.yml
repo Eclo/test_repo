@@ -23,12 +23,9 @@ jobs:
     # need to check all repo to make sure all branches are there
     # setting ref to PR SHA to checkout pull request HEAD commit instead of merge commit
     - name: 'Checkout PR'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v2.3.1
       with:
         fetch-depth: 0
-        ref: ${{ github.head_ref }}
-        repository: ${{ github.event.pull_request.head.repo.full_name }}
-        persist-credentials: false
 
     - uses: juliangruber/find-pull-request-action@v1
       id: GetPR
@@ -40,6 +37,15 @@ jobs:
     - name: 'Create work branch'
       id: WorkBranch
       run: |
+        # repo=$(echo ${{ github.event.pull_request.base.repo.clone_url }} | sed "s:/*$::")
+        
+        git remote add pr-branch "${{ github.event.pull_request.base.repo.html_url }}"
+        git fetch --all
+
+        git pull pr-branch/${{ github.event.pull_request.head.ref }}
+        
+        git checkout pr-branch/${{ github.event.pull_request.head.ref }}
+
         name="nfbot/clang-format-fix/$(uuidgen)"
         echo "::set-output name=name::$name"
         git switch -c $name
@@ -93,15 +99,16 @@ jobs:
         git commit -m "Automated code style fixes."
 
         # set auth token
-        auth="echo -n josesimoes:${{ secrets.NFBOT_GITHUB_ACTIONS }} | base64"
+        # auth="echo -n josesimoes:${{ secrets.NFBOT_GITHUB_ACTIONS }} | base64"
         
         # repo=$(echo ${{ github.event.pull_request.base.repo.clone_url }} | sed "s:/*$::")
         
-        git remote add upstream "${{ github.event.pull_request.base.repo.html_url }}"
-        git fetch --all
+        # git remote add upstream "${{ github.event.pull_request.base.repo.html_url }}"
+        #git fetch --all
         
         # push to new branch in HEAD repo
-        git -c http.extraheader="AUTHORIZATION: $auth" push -u upstream "${{ steps.WorkBranch.outputs.name }}:${{ steps.WorkBranch.outputs.name }}"
+        # git -c http.extraheader="AUTHORIZATION: $auth" push -u upstream "${{ steps.WorkBranch.outputs.name }}:${{ steps.WorkBranch.outputs.name }}"
+        git push origin "${{ steps.WorkBranch.outputs.name }}:${{ steps.WorkBranch.outputs.name }}"
 
     - name: 'Create Pull Request'
       id: CreatePR
