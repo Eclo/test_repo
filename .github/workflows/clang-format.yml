@@ -28,6 +28,7 @@ jobs:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
         repository: ${{ github.event.pull_request.head.repo.full_name }}
+        persist-credentials: false
 
     - uses: juliangruber/find-pull-request-action@v1
       id: GetPR
@@ -92,7 +93,7 @@ jobs:
         git commit -m "Automated code style fixes."
         
         # push to new branch in HEAD repo
-        remoteRepo="ssh://git@github.com/${{ github.event.pull_request.base.repo.full_name }}.git"
+        remoteRepo="https://${{ github.actor }}:${{ github.token }}@github.com/${{ github.event.pull_request.base.repo.full_name }}.git"
         git push "$remoteRepo" HEAD:${{ steps.WorkBranch.outputs.name }}
 
     - name: 'Create Pull Request'
