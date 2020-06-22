@@ -27,7 +27,7 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.base.sha }}
         fetch-depth: 0
-        github-token: ${{ secrets.NFBOT_GITHUB_ACTIONS }}
+        token: ${{ secrets.NFBOT_GITHUB_ACTIONS }}
       env:
         NFBOT_GITHUB_ACTIONS: ${{ secrets.NFBOT_GITHUB_ACTIONS }}
 
