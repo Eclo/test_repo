@@ -95,12 +95,12 @@ jobs:
         # set auth token
         auth="echo -n josesimoes:${{ secrets.NFBOT_GITHUB_ACTIONS }} | base64"
         
-        #repo=$(echo ${{ github.event.pull_request.base.repo.clone_url }} | sed "s:/*$::")
+        # repo=$(echo ${{ github.event.pull_request.base.repo.clone_url }} | sed "s:/*$::")
         
-        #git remote add nf-repo $repo
+        git remote add upstream ${{ github.event.pull_request.base.repo.clone_url }}
         
         # push to new branch in HEAD repo
-        git -c http.extraheader="AUTHORIZATION: $auth" push --repo=${{ github.event.pull_request.base.repo.html_url }} "${{ steps.WorkBranch.outputs.name }}"
+        git -c http.extraheader="AUTHORIZATION: $auth" push "${{ steps.WorkBranch.outputs.name }}"
 
     - name: 'Create Pull Request'
       id: CreatePR
