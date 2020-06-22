@@ -95,7 +95,7 @@ jobs:
         # set auth token
         auth="echo -n josesimoes:${{ secrets.NFBOT_GITHUB_ACTIONS }} | base64"
         
-        git remote set-url origin ${{ github.event.pull_request.base.repo.html_url }}.
+        git remote set-url origin ${{ github.event.pull_request.base.repo.clone_url }}
         
         # push to new branch in HEAD repo
         git -c http.extraheader="AUTHORIZATION: $auth" push -u origin HEAD:${{ steps.WorkBranch.outputs.name }}
