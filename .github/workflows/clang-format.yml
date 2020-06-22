@@ -93,7 +93,7 @@ jobs:
         git commit -m "Automated code style fixes."
         
         # push to new branch in HEAD repo
-        remoteRepo="https://${{ github.actor }}:${{ github.token }}@github.com/${{ github.event.pull_request.base.repo.full_name }}.git"
+        remoteRepo="https://nfbot:${{ secrets.NFBOT_GITHUB_ACTIONS }}@github.com/${{ github.event.pull_request.base.repo.full_name }}.git"
         git push "$remoteRepo" HEAD:${{ steps.WorkBranch.outputs.name }}
 
     - name: 'Create Pull Request'
